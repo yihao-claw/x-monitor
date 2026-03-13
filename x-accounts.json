@@ -1,0 +1,21 @@
+[
+  {"handle": "karpathy", "name": "Andrej Karpathy", "category": "AI/LLM"},
+  {"handle": "ylecun", "name": "Yann LeCun", "category": "AI/LLM"},
+  {"handle": "sama", "name": "Sam Altman", "category": "AI/LLM"},
+  {"handle": "DarioAmodei", "name": "Dario Amodei", "category": "AI/LLM"},
+  {"handle": "DrJimFan", "name": "Jim Fan", "category": "AI/LLM"},
+  {"handle": "swyx", "name": "swyx", "category": "AI/LLM"},
+  {"handle": "emollick", "name": "Ethan Mollick", "category": "AI/LLM"},
+  {"handle": "AravSrinivas", "name": "Arav Srinivas", "category": "AI/LLM"},
+  {"handle": "GroqInc", "name": "Groq", "category": "AI/LLM"},
+  {"handle": "VitalikButerin", "name": "Vitalik Buterin", "category": "Crypto"},
+  {"handle": "balajis", "name": "Balaji Srinivasan", "category": "Crypto"},
+  {"handle": "CryptoHayes", "name": "Arthur Hayes", "category": "Crypto"},
+  {"handle": "100trillionUSD", "name": "PlanB", "category": "Crypto"},
+  {"handle": "MessariCrypto", "name": "Messari", "category": "Crypto"},
+  {"handle": "elonmusk", "name": "Elon Musk", "category": "Tech"},
+  {"handle": "satyanadella", "name": "Satya Nadella", "category": "Tech"},
+  {"handle": "benedictevans", "name": "Benedict Evans", "category": "Tech"},
+  {"handle": "levie", "name": "Aaron Levie", "category": "Tech"},
+  {"handle": "jason", "name": "Jason Calacanis", "category": "Tech"}
+]
