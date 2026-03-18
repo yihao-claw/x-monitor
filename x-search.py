@@ -1,120 +1,88 @@
 #!/usr/bin/env python3
 """
-X (Twitter) search using Playwright with authenticated session.
-Searches for tweets and outputs structured JSON.
+X (Twitter) monitor using Brightdata MCP scraping.
+Scrapes X profiles and outputs new tweets as structured JSON.
 
 Usage:
-  python3 x-search.py "AI agent" --count 10
-  python3 x-search.py "from:elonmusk AI" --count 5 --mode latest
+  python3 x-search.py --handles karpathy,sama --count 5
+  python3 x-search.py --handles karpathy --count 10 --state /tmp/state.json --update-state
+
+Note: X search requires login; profile scraping works without auth via Brightdata.
 """
 
 import argparse
-import asyncio
 import json
 import os
+import re
+import subprocess
 import sys
 from pathlib import Path
 
-SECRETS_PATH = Path("/home/node/.openclaw/agents/bird/agent/secrets/x-cookies.json")
+SECRETS_PATH = Path("/home/node/.openclaw/agents/bird/agent/secrets/brightdata.json")
+SCRAPE_SH = Path("/home/node/.openclaw/workspace/projects/x-tracker/scripts/x-scrape.sh")
+CHECK_PY = Path("/home/node/.openclaw/workspace/projects/x-tracker/scripts/x-check-new.py")
+STATE_PATH = Path("/home/node/.openclaw/workspace/projects/x-monitor/x-monitor-state.json")
 
 
-async def search_x(query: str, count: int = 10, mode: str = "latest"):
-    from playwright.async_api import async_playwright
+def scrape_profile(handle: str, token: str) -> str:
+    """Scrape a profile via Brightdata MCP, return markdown."""
+    url = f"https://x.com/{handle.lstrip('@')}"
+    result = subprocess.run(
+        [str(SCRAPE_SH), url, "90"],
+        capture_output=True, text=True,
+        env={**os.environ, "BRIGHTDATA_API_TOKEN": token}
+    )
+    if result.returncode != 0:
+        raise RuntimeError(f"Scrape failed for {handle}: {result.stderr}")
+    return result.stdout
 
-    creds = json.loads(SECRETS_PATH.read_text())
 
-    async with async_playwright() as p:
-        browser = await p.chromium.launch(
-            headless=True,
-            args=["--no-sandbox", "--disable-dev-shm-usage"],
-        )
-        context = await browser.new_context(
-            user_agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-            viewport={"width": 1280, "height": 900},
-        )
-
-        await context.add_cookies([{
-            "name": "auth_token",
-            "value": creds["auth_token"],
-            "domain": ".x.com",
-            "path": "/",
-            "secure": True,
-            "httpOnly": True,
-        }])
-
-        page = await context.new_page()
-
-        # Build search URL
-        mode_param = "live" if mode == "latest" else "top"
-        from urllib.parse import quote
-        url = f"https://x.com/search?q={quote(query)}&src=typed_query&f={mode_param}"
-
-        print(f"Searching X: {query} (mode={mode})", file=sys.stderr)
-        await page.goto(url, wait_until="domcontentloaded", timeout=30000)
-        await page.wait_for_timeout(5000)
-
-        # Scroll to load more tweets if needed
-        tweet_count = await page.locator('[data-testid="tweet"]').count()
-        scroll_attempts = 0
-        while tweet_count < count and scroll_attempts < 5:
-            await page.evaluate("window.scrollBy(0, 1000)")
-            await page.wait_for_timeout(2000)
-            tweet_count = await page.locator('[data-testid="tweet"]').count()
-            scroll_attempts += 1
-
-        # Extract tweets
-        tweets = []
-        tweet_els = page.locator('[data-testid="tweet"]')
-        actual_count = min(count, await tweet_els.count())
-
-        for i in range(actual_count):
-            try:
-                el = tweet_els.nth(i)
-                text = await el.inner_text()
-                
-                # Parse the tweet text structure
-                lines = text.strip().split("\n")
-                
-                # Try to extract username, handle, time
-                tweet_data = {
-                    "index": i,
-                    "raw_text": text[:500],
-                }
-
-                # Look for links
-                links = await el.locator("a[href*='/status/']").all()
-                for link in links:
-                    href = await link.get_attribute("href")
-                    if href and "/status/" in href:
-                        tweet_data["url"] = f"https://x.com{href}" if href.startswith("/") else href
-                        break
-
-                tweets.append(tweet_data)
-            except Exception as e:
-                print(f"Error extracting tweet {i}: {e}", file=sys.stderr)
-
-        await browser.close()
-
-        result = {
-            "query": query,
-            "mode": mode,
-            "count": len(tweets),
-            "tweets": tweets,
-        }
-        return result
+def check_new_tweets(markdown: str, handle: str, state_path: str, update: bool, max_tweets: int) -> dict:
+    """Run x-check-new.py on scraped markdown."""
+    cmd = [
+        sys.executable, str(CHECK_PY),
+        "--handle", handle,
+        "--state", state_path,
+        "--max", str(max_tweets),
+    ]
+    if update:
+        cmd.append("--update-state")
+    result = subprocess.run(cmd, input=markdown, capture_output=True, text=True)
+    if result.returncode != 0:
+        return {"hasNew": False, "error": result.stderr, "handle": handle}
+    return json.loads(result.stdout)
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Search X (Twitter)")
-    parser.add_argument("query", help="Search query")
-    parser.add_argument("--count", "-n", type=int, default=10, help="Number of tweets")
-    parser.add_argument("--mode", "-m", choices=["latest", "top"], default="latest")
+    parser = argparse.ArgumentParser(description="X Monitor via Brightdata")
+    parser.add_argument("--handles", required=True, help="Comma-separated handles e.g. karpathy,sama")
+    parser.add_argument("--count", "-n", type=int, default=5, help="Max new tweets per handle")
+    parser.add_argument("--state", default=str(STATE_PATH), help="State file path")
+    parser.add_argument("--update-state", action="store_true", help="Mark seen tweets")
     parser.add_argument("--output", "-o", help="Output JSON file")
     args = parser.parse_args()
 
-    result = asyncio.run(search_x(args.query, args.count, args.mode))
+    creds = json.loads(SECRETS_PATH.read_text())
+    token = creds["BRIGHTDATA_API_TOKEN"]
 
-    output = json.dumps(result, ensure_ascii=False, indent=2)
+    handles = [h.strip() for h in args.handles.split(",")]
+    results = []
+
+    for handle in handles:
+        print(f"Scraping @{handle}...", file=sys.stderr)
+        try:
+            markdown = scrape_profile(handle, token)
+            result = check_new_tweets(markdown, f"@{handle}", args.state, args.update_state, args.count)
+            results.append(result)
+            if result.get("hasNew"):
+                print(f"  → {result['newCount']} new tweets", file=sys.stderr)
+            else:
+                print(f"  → no new tweets", file=sys.stderr)
+        except Exception as e:
+            print(f"  ERROR: {e}", file=sys.stderr)
+            results.append({"hasNew": False, "error": str(e), "handle": handle})
+
+    output = json.dumps(results, ensure_ascii=False, indent=2)
     if args.output:
         Path(args.output).write_text(output)
         print(f"Saved to {args.output}", file=sys.stderr)
