@@ -19,6 +19,9 @@ SECRETS_PATH = Path("/home/node/.openclaw/agents/bird/agent/secrets/brightdata.j
 SCRAPE_SH = Path("/home/node/.openclaw/workspace/projects/x-tracker/scripts/x-scrape.sh")
 CHECK_PY = Path("/home/node/.openclaw/workspace/projects/x-tracker/scripts/x-check-new.py")
 
+sys.path.insert(0, str(BASE))
+from x_rate_limiter import RateLimiter, WARN_THRESHOLD
+
 
 def scrape_profile(handle: str, token: str) -> str:
     url = f"https://x.com/{handle.lstrip('@')}"
@@ -65,13 +68,31 @@ def main():
     creds = json.loads(SECRETS_PATH.read_text())
     token = creds["BRIGHTDATA_API_TOKEN"]
     accounts = json.loads(ACCOUNTS_FILE.read_text())
+    rl = RateLimiter()
+
+    # Pre-flight budget check
+    needed = len(accounts)
+    status = rl.status()
+    print(f"[rate] {status['used']}/{status['budget']} used this month ({status['usage_pct']}%)", file=sys.stderr)
+
+    if not rl.can_request(count=needed):
+        print(f"[rate] BUDGET EXHAUSTED — skipping run. Remaining: {rl.remaining}", file=sys.stderr)
+        print("⚠️ *X Monitor: Monthly Brightdata budget exhausted. Run skipped.*")
+        return
+
+    if status["warn"]:
+        print(f"[rate] WARNING: usage >= {int(WARN_THRESHOLD*100)}% of monthly budget", file=sys.stderr)
 
     all_results = []
     for acc in accounts:
         handle = acc["handle"]
         print(f"Checking @{handle}...", file=sys.stderr)
+        if not rl.can_request(count=1):
+            print(f"  → budget hit mid-run, stopping", file=sys.stderr)
+            break
         try:
             md = scrape_profile(handle, token)
+            rl.record(count=1, source="daily-monitor", handle=handle)
             if not md.strip():
                 print(f"  → empty response", file=sys.stderr)
                 continue
@@ -85,6 +106,11 @@ def main():
             print(f"  ERROR: {e}", file=sys.stderr)
 
     summary = format_telegram(all_results)
+    # Append usage footer
+    s = rl.status()
+    summary += f"\n\n_Brightdata: {s['used']}/{s['budget']} requests used this month ({s['usage_pct']}%)_"
+    if s["warn"]:
+        summary += "\n⚠️ _Usage >= 80% — approaching monthly limit_"
     print(summary)
 
 
