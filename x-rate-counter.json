@@ -1,0 +1,192 @@
+{
+  "month": "2026-03",
+  "used": 31,
+  "log": [
+    {
+      "ts": "2026-03-19T09:00:43.003592+00:00",
+      "count": 1,
+      "source": "daily-monitor",
+      "handle": "karpathy"
+    },
+    {
+      "ts": "2026-03-19T09:01:53.160142+00:00",
+      "count": 1,
+      "source": "daily-monitor",
+      "handle": "ylecun"
+    },
+    {
+      "ts": "2026-03-19T09:02:05.956813+00:00",
+      "count": 1,
+      "source": "daily-monitor",
+      "handle": "sama"
+    },
+    {
+      "ts": "2026-03-19T09:03:21.373604+00:00",
+      "count": 1,
+      "source": "daily-monitor",
+      "handle": "karpathy"
+    },
+    {
+      "ts": "2026-03-19T09:03:40.162756+00:00",
+      "count": 1,
+      "source": "daily-monitor",
+      "handle": "ylecun"
+    },
+    {
+      "ts": "2026-03-19T09:04:09.266115+00:00",
+      "count": 1,
+      "source": "daily-monitor",
+      "handle": "sama"
+    },
+    {
+      "ts": "2026-03-19T09:04:29.826454+00:00",
+      "count": 1,
+      "source": "daily-monitor",
+      "handle": "DarioAmodei"
+    },
+    {
+      "ts": "2026-03-19T09:04:53.574883+00:00",
+      "count": 1,
+      "source": "daily-monitor",
+      "handle": "DrJimFan"
+    },
+    {
+      "ts": "2026-03-19T09:05:38.832985+00:00",
+      "count": 1,
+      "source": "daily-monitor",
+      "handle": "swyx"
+    },
+    {
+      "ts": "2026-03-19T09:06:15.116680+00:00",
+      "count": 1,
+      "source": "daily-monitor",
+      "handle": "emollick"
+    },
+    {
+      "ts": "2026-03-19T09:06:44.824493+00:00",
+      "count": 1,
+      "source": "daily-monitor",
+      "handle": "AravSrinivas"
+    },
+    {
+      "ts": "2026-03-19T09:07:15.171144+00:00",
+      "count": 1,
+      "source": "daily-monitor",
+      "handle": "GroqInc"
+    },
+    {
+      "ts": "2026-03-19T09:08:27.558448+00:00",
+      "count": 1,
+      "source": "daily-monitor",
+      "handle": "karpathy"
+    },
+    {
+      "ts": "2026-03-19T09:09:01.235076+00:00",
+      "count": 1,
+      "source": "daily-monitor",
+      "handle": "ylecun"
+    },
+    {
+      "ts": "2026-03-19T09:09:20.972980+00:00",
+      "count": 1,
+      "source": "daily-monitor",
+      "handle": "sama"
+    },
+    {
+      "ts": "2026-03-19T09:09:35.639199+00:00",
+      "count": 1,
+      "source": "daily-monitor",
+      "handle": "DarioAmodei"
+    },
+    {
+      "ts": "2026-03-19T09:09:55.048617+00:00",
+      "count": 1,
+      "source": "daily-monitor",
+      "handle": "DrJimFan"
+    },
+    {
+      "ts": "2026-03-19T09:10:14.183480+00:00",
+      "count": 1,
+      "source": "daily-monitor",
+      "handle": "swyx"
+    },
+    {
+      "ts": "2026-03-19T09:11:28.326422+00:00",
+      "count": 1,
+      "source": "daily-monitor",
+      "handle": "emollick"
+    },
+    {
+      "ts": "2026-03-19T09:11:43.710149+00:00",
+      "count": 1,
+      "source": "daily-monitor",
+      "handle": "AravSrinivas"
+    },
+    {
+      "ts": "2026-03-19T09:12:12.790136+00:00",
+      "count": 1,
+      "source": "daily-monitor",
+      "handle": "GroqInc"
+    },
+    {
+      "ts": "2026-03-19T09:12:33.270540+00:00",
+      "count": 1,
+      "source": "daily-monitor",
+      "handle": "VitalikButerin"
+    },
+    {
+      "ts": "2026-03-19T09:12:56.810456+00:00",
+      "count": 1,
+      "source": "daily-monitor",
+      "handle": "balajis"
+    },
+    {
+      "ts": "2026-03-19T09:13:37.518817+00:00",
+      "count": 1,
+      "source": "daily-monitor",
+      "handle": "CryptoHayes"
+    },
+    {
+      "ts": "2026-03-19T09:13:56.095671+00:00",
+      "count": 1,
+      "source": "daily-monitor",
+      "handle": "100trillionUSD"
+    },
+    {
+      "ts": "2026-03-19T09:14:17.807351+00:00",
+      "count": 1,
+      "source": "daily-monitor",
+      "handle": "MessariCrypto"
+    },
+    {
+      "ts": "2026-03-19T09:14:41.072192+00:00",
+      "count": 1,
+      "source": "daily-monitor",
+      "handle": "elonmusk"
+    },
+    {
+      "ts": "2026-03-19T09:14:52.913803+00:00",
+      "count": 1,
+      "source": "daily-monitor",
+      "handle": "satyanadella"
+    },
+    {
+      "ts": "2026-03-19T09:15:11.844456+00:00",
+      "count": 1,
+      "source": "daily-monitor",
+      "handle": "benedictevans"
+    },
+    {
+      "ts": "2026-03-19T09:15:29.283907+00:00",
+      "count": 1,
+      "source": "daily-monitor",
+      "handle": "levie"
+    },
+    {
+      "ts": "2026-03-19T09:15:45.163559+00:00",
+      "count": 1,
+      "source": "daily-monitor",
+      "handle": "jason"
+    }
+  ]
+}

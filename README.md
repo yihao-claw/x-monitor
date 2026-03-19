@@ -71,7 +71,7 @@ python3 x_rate_limiter.py
 
 ## Cron 排程
 
-由 Horse agent 的 `x-monitor-daily` cron job 每日 UTC 09:00 執行：
+由 Vince agent 的 `x-monitor-daily` cron job 每日 UTC 09:00 執行：
 
 ```
 Job ID: cc4b1d12-9653-4345-b1bb-0952c84df692

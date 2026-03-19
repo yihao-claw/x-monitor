@@ -25,11 +25,14 @@ from x_rate_limiter import RateLimiter, WARN_THRESHOLD
 
 def scrape_profile(handle: str, token: str) -> str:
     url = f"https://x.com/{handle.lstrip('@')}"
-    result = subprocess.run(
-        [str(SCRAPE_SH), url, "90"],
-        capture_output=True, text=True,
-        env={**os.environ, "BRIGHTDATA_API_TOKEN": token}
-    )
+    try:
+        result = subprocess.run(
+            [str(SCRAPE_SH), url, "90"],
+            capture_output=True, text=True, timeout=120,
+            env={**os.environ, "BRIGHTDATA_API_TOKEN": token}
+        )
+    except subprocess.TimeoutExpired:
+        return ""
     if result.returncode != 0:
         return ""
     return result.stdout
