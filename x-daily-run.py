@@ -126,8 +126,15 @@ def format_telegram(all_results: list) -> str:
 
 
 def main():
+    import argparse
+    parser = argparse.ArgumentParser(description="X Monitor daily runner")
+    parser.add_argument("--accounts", type=str, default=None,
+                        help="Path to custom accounts JSON file (default: x-accounts.json in same dir)")
+    args = parser.parse_args()
+
     token = load_token()
-    accounts = json.loads(ACCOUNTS_FILE.read_text())
+    accounts_path = Path(args.accounts) if args.accounts else ACCOUNTS_FILE
+    accounts = json.loads(accounts_path.read_text())
     rl = RateLimiter()
 
     # Rate limit: batch counts as 1 request (19 handles, 1 API call)
