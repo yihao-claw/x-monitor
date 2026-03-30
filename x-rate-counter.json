@@ -1,6 +1,6 @@
 {
   "month": "2026-03",
-  "used": 75,
+  "used": 77,
   "log": [
     {
       "ts": "2026-03-19T09:00:43.003592+00:00",
@@ -451,6 +451,18 @@
       "count": 1,
       "source": "market-run-batch",
       "handle": "10-market-handles"
+    },
+    {
+      "ts": "2026-03-29T09:00:27.551828+00:00",
+      "count": 1,
+      "source": "daily-monitor-batch",
+      "handle": "19-handles"
+    },
+    {
+      "ts": "2026-03-30T09:00:31.075017+00:00",
+      "count": 1,
+      "source": "daily-monitor-batch",
+      "handle": "19-handles"
     }
   ]
 }
